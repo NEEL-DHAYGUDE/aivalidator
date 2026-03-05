@@ -345,7 +345,7 @@ def run_ai_audit(api_key, master_text, target_text):
         temperature=0.1
     )
     return response.choices[0].message.content
-
 if __name__ == "__main__":
-    print(">>> Starting Nazar.ai Prototype Server on Port 8080...")
-    app.run(debug=False, port=8080)
+    import os
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
