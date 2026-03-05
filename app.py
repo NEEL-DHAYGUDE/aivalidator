@@ -347,5 +347,7 @@ def run_ai_audit(api_key, master_text, target_text):
     return response.choices[0].message.content
 if __name__ == "__main__":
     import os
+    # Render provides a PORT environment variable. We MUST use it.
     port = int(os.environ.get("PORT", 8080))
+    # host='0.0.0.0' tells the app to listen to all public requests
     app.run(host='0.0.0.0', port=port)
