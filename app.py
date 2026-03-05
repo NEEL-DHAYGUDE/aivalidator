@@ -77,8 +77,9 @@ HTML_BASE = """
         .blinking-text { animation: blinker 1.5s linear infinite; color: #0EA5E9; font-weight: bold; letter-spacing: 2px; margin-bottom: 10px; }
         @keyframes blinker { 50% { opacity: 0.4; } }
         /* This hides the website UI when printing to PDF (Ctrl+P) */
+        /* This hides the website UI when printing to PDF (Ctrl+P) */
         @media print {
-            .navbar, .footer, button, .api-note, hr, .navbar-links {
+            .navbar, .footer, button, .api-note, hr, .navbar-links, .navbar-brand {
                 display: none !important;
             }
             body { background: white !important; }
@@ -88,9 +89,11 @@ HTML_BASE = """
                 box-shadow: none !important; 
                 border: none !important;
                 max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
             }
-            .report-box { padding: 0 !important; margin: 0 !important; }
-            h1 { color: black !important; }
+            .report-box { padding: 0 !important; margin: 0 !important; border: none !important; }
+            h1, h2, h3, p, b, li { color: black !important; }
         }
     </style>
     
@@ -361,8 +364,9 @@ def run_ai_audit(api_key, master_text, target_text):
         temperature=0.1
     )
     # This strips away the ```html and ``` tags if the AI includes them
+    # This strips away any markdown code blocks returned by the AI
     raw_content = response.choices[0].message.content
-    clean_content = raw_content.replace("```html", "").replace("```", "").strip()
+    clean_content = raw_content.replace("```html", "").replace("```HTML", "").replace("```", "").strip()
     return clean_content
 if __name__ == "__main__":
     import os
@@ -370,4 +374,5 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     # host='0.0.0.0' tells the app to listen to all public requests
     app.run(host='0.0.0.0', port=port)
+
 
