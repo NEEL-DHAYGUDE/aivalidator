@@ -76,6 +76,22 @@ HTML_BASE = """
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .blinking-text { animation: blinker 1.5s linear infinite; color: #0EA5E9; font-weight: bold; letter-spacing: 2px; margin-bottom: 10px; }
         @keyframes blinker { 50% { opacity: 0.4; } }
+        /* This hides the website UI when printing to PDF (Ctrl+P) */
+        @media print {
+            .navbar, .footer, button, .api-note, hr, .navbar-links {
+                display: none !important;
+            }
+            body { background: white !important; }
+            .container { 
+                background: white !important; 
+                color: black !important; 
+                box-shadow: none !important; 
+                border: none !important;
+                max-width: 100% !important;
+            }
+            .report-box { padding: 0 !important; margin: 0 !important; }
+            h1 { color: black !important; }
+        }
     </style>
     
     <script>
@@ -344,10 +360,14 @@ def run_ai_audit(api_key, master_text, target_text):
         ],
         temperature=0.1
     )
-    return response.choices[0].message.content
+    # This strips away the ```html and ``` tags if the AI includes them
+    raw_content = response.choices[0].message.content
+    clean_content = raw_content.replace("```html", "").replace("```", "").strip()
+    return clean_content
 if __name__ == "__main__":
     import os
     # Render provides a PORT environment variable. We MUST use it.
     port = int(os.environ.get("PORT", 8080))
     # host='0.0.0.0' tells the app to listen to all public requests
     app.run(host='0.0.0.0', port=port)
+
